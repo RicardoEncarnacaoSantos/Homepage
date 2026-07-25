@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <!-- Favicon -->
+
+    <link rel="shortcut icon" type="image/png" href="http://www.ricardoencarnacaosantos.com/images/favicon.png">
+
+    <!--
+    <link rel="shortcut icon" type="image/png" href="http://s5.postimg.org/juunvhwib/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon2.ico?" />
+    -->
+    <!-- Open Graph -->
+    <meta property="og:title" content="AI Lookout">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://www.ricardoencarnacaosantos.com/">
+    <meta property="og:image" content="http://www.ricardoencarnacaosantos.com/images/cvRes.jpg">
+    <!--<meta property="og:image" content="http://s5.postimg.org/oycqs7sur/cv_Res.jpg">-->
+    <meta property="og:description" content="Ricardo Santos webpage">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="pt_PT">
+
+    <title>Deep Art: creative neural networks</title>
+    <!-- Include my styles -->
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body class="bodyColored">
+
+    <div class="hdr reduced">
+        <table width="100%" cellspacing="0px" cellpadding="0px">
+            <tr>
+                <td width="10%">
+                    <a href="../../index.html">
+                        <img src="../../images/ai_lookout_logo.jpg" alt="" title="Back to AI Lookout page" style=" width: 92px; height: 92px;" />
+                    </a>
+                </td>
+                <td width="80%">
+                    <div class="hdrTextContainer2">
+                        <span id="hdrTextTitle">Deep Art: creative neural networks</span><br>
+                        <span id="hdrTextMicroSubtitle">Published in the (now extinct) Altitude Software's blog, 2017</span><br>
+                    </div>
+                </td>
+                <td id="resLogo" width="10%" valign="bottom">
+                    <a href="../../aboutme.htm">
+                        <img src="../../images/res_logo.jpg" alt="" title="Ricardo Santos" style=" width: 92px; height: 92px;" />
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="fixedContainer howto">
+
+        <div class="articleTitle">Deep Art: creative neural networks</div>
+        <br>
+
+        <p>
+            I remember a painting professor I had telling the class: “forget the contours, contours are in your brain, not in reality. Painting is a visual interpretation. You don’t paint a chair, you find a solution, in canvas, for the colors, light and shadows you observe, ignoring if they seem a chair or a train. If you do it right, in the end you’ll get a chair”.
+        </p>
+
+        <p>
+            I’m not much of a painter myself, my chairs always ended like trains, so I never knew if he was right or not. Probably was. But I just wonder what he would say about image interpretation – made by machines.
+        </p>
+
+        <p>
+            Recently, artificial neural networks (ANNs) began to be used to produce images, some of them beautiful, like this one:
+        </p>
+
+        <div class="spacedImage">
+            <img src="deep_dream.jpg" title="Finally, in the History of Mankind, a machine creates a rose made of candy" alt="Deep Dream" />
+            <br /><br />
+            This image and many other machine-generated images can be found in the <a href="https://deepdreamgenerator.com/" target="_blank">Google Deep Dream</a> web page.
+        </div>
+
+        <p>
+            The final image, on the right, was not produced by image filters or morphing algorithms; it was created by a trained ANN specialized in image recognition, called CNN, but used in reverse to combine the content of the upper-left image with the style of the bottom-left image. Ok, that sound strange. I’ll start from the beginning.
+        </p>
+
+        <p>
+            What is an artificial neural network?
+        </p>
+
+        <p>
+            It’s a computer structure inspired by the biological neural networks. When they were invented, in the mid-20th century, they were described as a computational model of the human brain.
+        </p>
+
+        <p>
+            As a diagram, a simple Artificial Neural Network looks like this:
+        </p>
+
+        <div class="spacedImage">
+            <img src="ann.jpg" title="ANN architecture (example)" alt="Artificial Neural Network (diagram)" />
+        </div>
+
+        <p>
+            The output is a prediction and can represent a class (“Cat”, “Dog”, “Train”, …) or be just a number (a predicted price for a house, for example).
+        </p>
+
+        <p>
+            The input is the data we give to the network to obtain the prediction. For example, the pixels of an image, or data that can influence the price of houses (location, age of the building, etc.).
+        </p>
+
+        <p>
+            Inside we have layers of so-called neurons (the white circles). Each neuron receives inputs and uses them to compute an output, a value used as input for other neurons. Each of these connections (the arrows in the diagram) has 2 unique variables, a weight and a bias.
+        </p>
+
+        <p>
+            A network would not be of much use without being trained for some purpose. Training consists of feeding the network with lots of labeled data samples. Put another way, we tell the network which output is the right one for the inputs we’re giving (it’s like saying “this image is a dog”, “this image is a cat”, and so on, for millions of images, repeatedly). The network learns by adjusting all the weights and biases a little bit, progressively, so that, given the inputs, the output of the network become closer and closer to the labeled output.
+        </p>
+
+        <p>
+            This is a very simplified, undetailed description of an ANN. But yes, in the end the biological-inspired computational model of the human brain is just a big equation. So let’s simplify even more and represent by W all the weights, by B all the bias, by X all the inputs, by Y the output and, for those who like statistics (who doesn’t?), let’s have the entire network represented in the form of a linear regression:
+        </p>
+
+        <div class="spacedImage">
+            <img src="linear_regression.jpg" title="Linear regression formula" alt="Linear regression formula" />
+        </div>
+
+        <p>
+            Note that this formula is an oversimplification just to meet the purpose of this post. That said, let’s get back to the Deep Dream.
+        </p>
+
+        <p>
+            Neural networks come in different flavors, one of them very good at 2D processing. CNNs, or <a href="https://en.wikipedia.org/wiki/Convolutional_neural_network" target="_blank">Convolutional Neural Networks</a>, are special ANNs used by Google Deep Dream and many other image recognition systems, including smartphone apps, to classify images. CNNs use dedicated layers called convolutional layers that decompose the image in feature maps, each one an image itself (representing parts of the image, edges, corners, contours – my painting professor would not like that at all). CNNs are also used for speech recognition, natural language and other complex applications.
+        </p>
+
+        <p>
+            But the Deep Dream CNN is not trying to classify anything. How does it get to the final image?
+        </p>
+
+        <p>
+            First it is trained in a normal way for image recognition, by adjusting W and B in the equation, given X and Y (corresponding to tons of labeled images):
+        </p>
+
+        <div class="spacedImage">
+            <img src="linear_regression_WB.jpg" title="Adjusting W and B" alt="Adjusting W and B" />
+        </div>
+
+        <p>
+            It was found that during the training procedure, a CNN specialized in image recognition internally represent images in a way that allows for the separation of image content and style. The feature maps determine the content, while a correlation of the feature maps named Gram matrix represents the image style.
+        </p>
+
+        <p>
+            So the next step is to feed the “content” and “style” images through the CNN and save the feature maps and the Gram matrix respectively.
+        </p>
+
+        <div class="spacedImage">
+            <img src="feature_maps_and_gram_matrix.jpg" title="Feature maps and the Gram matrix" alt="Feature maps and the Gram matrix" />
+        </div>
+
+        <p>
+            Finally, our target will be the “X” in the equation – the input.
+        </p>
+
+        <div class="spacedImage">
+            <img src="linear_regression_X.jpg" title="X marks the target" alt="X marks the target" />
+        </div>
+
+        <p>
+            That’s what we want to know: given the content and style, what is the best combination of both. The network is used in reverse to find it. Instead of adjusting W and B, it will be adjusting X, the input image, that starts as white noise, in small steps until it is sufficiently close to the desired content and style.
+        </p>
+
+        <p>
+            Because the style image and the content image will never match, the network is forced to create a solution, let’s say its unique interpretation of the challenge.
+        </p>
+
+        <div class="spacedImage">
+            <img src="solution.jpg" title="The final solution" alt="The final solution" />
+        </div>
+
+        <p>
+            This technique is called “deep art” because, taking a tolerant definition of “art”, it results in art achieved through deep learning methods. You can read about it <a href="http://www.subsubroutine.com/sub-subroutine/2016/11/12/painting-like-van-gogh-with-convolutional-neural-networks" target="_blank">here</a> and <a href="https://towardsdatascience.com/creating-art-with-conv-neural-nets-3ea5ebd7ef" target="_blank">here</a>, or just go to <a href="https://deepdreamgenerator.com/" target="_blank">Deep Dream</a> web page or download the <a href="https://play.google.com/store/apps/details?id=com.neuralprisma" target="_blank">Prisma app</a> and try for yourself.
+</p>
+
+        <p>
+            But enough of geeky stuff. Returning to art, the “<a href="http://www.imdb.com/title/tt3262342/?ref_=nv_sr_1" target="_blank">Loving Vincent</a>” movie, released last year, is an animation where more than 800 oil paintings in Van Gogh style, painted during 6 years by a team of 125 professional artists, were used to create the 65000 frames of the movie. Without diminishing this tremendous work and the invaluable human creativity, maybe the next movie of this kind can already be produced using deep learning techniques.
+</p>
+
+        <p>
+            This is the first of a series of posts on deep learning. In “Deep Van Gogh” style, thanks to Google Deep Dream,
+        </p>
+
+        <p>
+            Happy new year to all (including machines)
+        </p>
+
+        <div class="spacedImage">
+            <img src="happy_new_year.jpg" title="Happy 2018!" alt="Happy new year" />
+        </div>
+
+        <br>
+
+    </div>
+
+    <div id="footer">
+        <div id="footerText">Ricardo Encarnação Santos</div>
+    </div>
+
+</body>
+</html>

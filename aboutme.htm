@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/xhmtl"><head>
+
+<!-- Favicon -->
+
+<link rel="shortcut icon" type="image/png" href="http://www.ricardoencarnacaosantos.com/images/favicon.png">
+
+<!--
+<link rel="shortcut icon" type="image/png" href="http://s5.postimg.org/juunvhwib/favicon.png">
+<link rel="shortcut icon" type="image/x-icon" href="images/favicon2.ico?" />
+-->
+<!-- Open Graph -->
+<meta property="og:title" content="Ricardo Santos">
+<meta property="og:type" content="website">
+<meta property="og:url" content="http://www.ricardoencarnacaosantos.com/">
+<meta property="og:image" content="http://www.ricardoencarnacaosantos.com/images/cvRes.jpg">
+<!--<meta property="og:image" content="http://s5.postimg.org/oycqs7sur/cv_Res.jpg">-->
+<meta property="og:description" content="Ricardo Santos webpage">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_PT">
+
+<title>
+Ricardo Santos
+</title>
+
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+
+<!-- Include my styles -->
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="style_cv.css">
+
+<!-- Include jQuery UI -->
+<link rel="stylesheet" href="js/jQueryUI/jquery-ui.min.css">
+
+<script src="js/jQueryUI/external/jquery/jquery.js"></script>
+<script src="js/jQueryUI/jquery-ui.min.js"></script>
+<script src="js/common.js"></script>
+
+<script type="text/javascript">
+	function getMousePosition(event){
+		mouseX = event.pageX;
+		mouseY = event.pageY;
+		
+		if(mouseY>=imageTop && mouseY<=imageBottom){
+			if(mouseX >= imageLeft && mouseX <= imageLeft + actionWidth){
+				$('#helloImage').css('z-index','0')
+				$('#helloImage_right').css('z-index','0')
+				$('#helloImage_left').css('z-index','1')
+			}
+			else if(mouseX >= imageRight - actionWidth && mouseX <= imageRight){
+				$('#helloImage').css('z-index','0')					
+				$('#helloImage_left').css('z-index','0')
+				$('#helloImage_right').css('z-index','1')
+			}
+			else{					
+				$('#helloImage_left').css('z-index','0')
+				$('#helloImage_right').css('z-index','0')					
+				$('#helloImage').css('z-index','1')
+			}
+		}	
+	}
+
+	$(document).ready(function(){		
+		$( '#helloImageHolder' ).mousemove(function( event ) {
+			/*$("#test").html(event.pageX.toString() + ", " + $('#helloImage').offset().left.toString());*/
+			var relPos = event.pageX  - $('#helloImage').offset().left;
+			if(relPos < 90){
+				$('#helloImage').css('z-index','0')
+				$('#helloImage_right').css('z-index','0')
+				$('#helloImage_left').css('z-index','1')
+			}
+			else if(relPos > 220){
+				$('#helloImage').css('z-index','0')					
+				$('#helloImage_left').css('z-index','0')
+				$('#helloImage_right').css('z-index','1')
+			}
+			else{
+				$('#helloImage_left').css('z-index','0')
+				$('#helloImage_right').css('z-index','0')					
+				$('#helloImage').css('z-index','1')
+			}
+		});
+		
+		$( '#helloImageHolder' ).mouseleave(function() {
+			$('#helloImage_left').css('z-index','0')
+			$('#helloImage_right').css('z-index','0')					
+			$('#helloImage').css('z-index','1')			
+		});
+		
+		$('#imgLinkedIn').hover(
+			function(){	
+				$(this).attr('src', 'images/linkedin_hover.png');	
+			},
+			function(){	
+				$(this).attr('src', 'images/linkedin.png');	
+			}
+		);
+		
+		$('#imgLinkedIn').click(
+			function(){
+				window.open('http://pt.linkedin.com/in/ricardoencarnacaosantos','_blank');
+			}
+		);
+		
+		$('#imgLinkedIn').tooltip({
+			content: 'My LinkedIn profile'
+		});
+		
+		$('#buttonCV_EN').tooltip({
+			content: 'Curriculum Vitae (English)'
+		});
+
+		$('#buttonCV_EN').click(function(){
+			window.open('cv_en.htm','_blank');
+		});
+
+		$('#buttonCV_PT').tooltip({
+			content: 'Curriculum Vitae (Português)'
+		});
+
+		$('#buttonCV_PT').click(function(){
+			window.open('cv_pt.htm','_blank');
+		});
+
+		$('#helloTitleText').html(getGreetingEN());
+
+		$("#hdrTextDescription").hover(
+			function(){
+				$(this).text('Sen10r S0ftw@re Eng1nner, AI Enthus1@st');
+			},
+			function(){
+				$(this).text('Senior Software Enginner, AI Enthusiast');
+			}
+		);
+	});
+	</script>
+
+</head>
+
+<body>
+		
+	<div class="hdr">
+	<div class="hdrTextContainer">
+	<span id="hdrTextFirstName">Ricardo</span> <span id="hdrTextLastName">Santos</span>
+	<br>
+	<span id="hdrTextDescription">Senior Software Engineer, AI Enthusiast</span>
+	</div>
+	</div>
+
+	<div id="menu">
+		<table id="menuTable" cellspacing="0px" cellpadding="0px">
+			<tbody><tr>
+				<td width="160px"><div class="unselectedOption"><a class="menuLink" href="index.html">PUBLICATIONS</a></div></td>
+				<td id="menuSeparator" width="0px"><br></td>
+				<td width="100px"><div class="unselectedOption"><a class="menuLink" href="howto.htm">HOW TO</a></div></td>
+				<td id="menuSeparator" width="0px"><br></td>								
+				<td width="140px"><div class="unselectedOption"><a class="menuLink" href="resources.htm">RESOURCES</a></div></td>
+				<td id="menuSeparator" width="0px"><br></td>				
+				<td width="100px"><div class="unselectedOption"><a class="menuLink" href="more.htm">MORE</a></div></td>				
+				<td id="menuSeparator" width="0px"><br></td>
+				<td width="120px"><div class="selectedOption">ABOUT ME</div></td>
+			</tr>
+		</tbody></table>
+	<br>
+	</div>
+
+	<table id="helloContainer" cellspacing="36px" cellpadding="0px">
+				<tbody><tr>
+					<td>
+						<div id="helloImageHolder">
+							<img src="images/res0.jpg" id="helloImage" />
+							<img src="images/res0_left.jpg" id="helloImage_left" />
+							<img src="images/res0_right.jpg" id="helloImage_right" />
+						</div>
+						
+						<!--
+						<p>
+							<span id="test">TEST</span>
+						</p>-->
+						
+						<p class="helloLabel">Email: <br>
+							<a class="email" href="mailto:ricardo.encarnacao.santos@gmail.com">ricardo.encarnacao.santos@gmail.com</a>
+						</p>
+						<p class="helloLabel">Social links: <br>							
+							<img src="images/linkedin.png" id="imgLinkedIn" title="">
+						</p>
+						
+						<!--
+						<div id="buttonCVContainer"><button class="buttonCV" id="buttonCV_EN" title="">CV (English)</button></div>
+						<div id="buttonCVContainer"><button class="buttonCV" id="buttonCV_PT" title="">CV (Português)</button></div>						
+						-->					
+						
+						<img src="images/cyber_rik.jpg" title="Cyborg (so much free time in the 90s...)" style=" width: 300px; height: 402px;"/>
+						<div class="pImageDescriptionArea">
+							<span class="pImageDescriptionText"><i>Cyborg</i> (so much free time in the 90s...)</span>
+						</div>
+					</td>
+					
+					<td id="helloText">
+						<span id="helloTitleText">HELLO,</span>
+
+						<br />
+						<br />
+
+						<p class="helloBodyText">
+							Time will tell us if Artificial Intelligence is the greatest achievement of mankind or a delusional hype but, despite the outcome of evolution, AI will always have this charming quality of existing in-between reality and dream, science and fiction. It has something "alive" in it by definition: intelligence. Trying to create AI is trying to create something that exists only in living beings, produced by biological brains crafted by millions of years of evolution. In that sense, maybe AI is a form of art after all. More than that, it carries the promise of surpassing human intelligence, which it already does in narrow applications like games and vision.
+						</p>
+
+						<div class="pSeparator">
+							<span class="pSeparatorDot"></span>
+						</div>
+
+						<p class="helloBodyText">
+							I remember programming a checkers algorithm, in the 90s (using Prolog - yes, it's a very old story), and feel pure joy each time I lost against it. Lee Sedol, world champion and greatest master of the complex game of "Go", was not very happy <a href="https://en.wikipedia.org/wiki/AlphaGo_versus_Lee_Sedol">losing against a machine in 2016</a>, but his goal was different from mine: he was playing to win. Despite the level of expertise and the kind of game, losing against something we've created is not losing at all (unless, of course, we're talking about <a href="https://en.wikipedia.org/wiki/Skynet_%28Terminator%29">Skynet)</a>.
+						</p>
+
+						<div class="pSeparator">
+							<span class="pSeparatorDot"></span>
+						</div>
+
+						<p class="helloBodyText">
+							Also in the 90s, I've programmed my first <a href="https://en.wikipedia.org/wiki/ELIZA">ELIZA</a>-inspired chatbot and almost force my friends to make conversations with it. Regardless of being a really basic (stupid) piece of code, with no AI at all, it generated fun, surreal, memorable dialogues - like ELIZA did in the 60s. And that's another pearl shinning under the AI shell: the tendency humans have to ignore the known limitations of programs and perceive attributes that machines don't have (yet), like reasoning, emotions, empathy or sarcasm. This is known by the <a href="https://en.wikipedia.org/wiki/ELIZA_effect">ELIZA Effect</a> and it's fun and scary at the same time. Today rule-based engines like <a href="https://en.wikipedia.org/wiki/ChatScript">Chatscript</a> surely allow to take pattern matching bots to a higher level (check if <a href="http://ec2-54-215-197-164.us-west-1.compute.amazonaws.com/speech.php">Rose </a>agrees), and there are of course the more trendy AI approaches, some being developed by software giants like Apple, Amazon, Microsoft and Google. It will be fun to see what chatbots will accomplish in the near future.
+						</p>
+
+						<div class="pSeparator">
+							<span class="pSeparatorDot"></span>
+						</div>
+
+						<p class="helloBodyText">
+							And there it is. Some years after the end of the latest AI winter, I find myself entertained with neural networks, deep reinforcement learning and chatbots, this time professionally, delightedly seeing that the world is betting on AI and important breakthroughs are being achieved every year. Deep Learning successes of the last years woke up the hopes and fears about a powerful artificial intelligence. I've created this website to share some of my enthusiasm about all this.
+						</p>
+
+						<div class="pSeparator">
+							<span class="pSeparatorDot"></span>
+						</div>
+
+						<p class="helloBodyText">
+							What do I do? I'm a software designer / developer and a Machine Learning learner. I've worked in the AI field researching and prototyping deep reinforcement learning algorithms for the contact center industry, and also in Microsoft Language Understanding (LUIS)-powered chatbots. I've also conducted research in the chatbots area, while maintaining a Windows desktop application for contact center agents, capable of handling different media like voice, email and instant messaging, able to run customized scripts, manage contacts, access a knowledge base and integrate with third-party software in several ways. The graphical interface was designed to be highly flexible so it can adapt to the needs of every customer (and <i>that</i> is a big challenge). I've designed and developed, among other features, a layout editor, a visual script editor, a highly-customizable leaderboard control for gamification purposes and a 'smart inbound' system to help the human agent to identify ASAP who's on the other side of the line.
+						</p>
+
+						<p class="helloBodyText">
+							I've started working on cloud computing in 2018. Using my machine learning knowledge, I've designed a fault tolerant, scalable cloud service to provide Knowledge Management features, namely a document classifier and a recommendation system for chat. This autonomous system analysed agent transcripts periodically and learned from them. It was then used by the agent applications to provide quick recommendations for the agents during live chat sessions, based on the context (the last n lines of conversation) and based on what the agent was typing at the moment. It supported 5 cultures automatically using built-in language detection. <br /><br />
+
+							The service ran in a Kubernetes cluster and used Azure Machine Learning (AML) services for training, building and deploying inference models (which were also scalable pods running in the cluster). The models were artificial neural networks and also simpler ML algorithms. Creating an autonomous AI system is a challenge. For example, fine tuning a neural network without a "human in the loop" was done by reserving some training virtual machines, launching some paralel trainings with variations in the hyperparameters, and finally comparing the results, selecting the best model and deploying it. This was possible without huge costs thanks to Azure's Hyperdrive service. And it was fun.<br /><br />
+
+							I've worked with other cloud services, databases and technologies: event streaming (Apache Kafka, Kafka Connect), monitoring (Prometheus, Grafana), Azure Storage (Fileshare, Blobs), centralized logging (Graylog, FluentD), managed cloud databases (Managed SQL Server, MongoDB, PostgreSQL...), CI/CD (Flux). And it was fun too.
+						</p>
+
+						<div class="pSeparator">
+							<span class="pSeparatorDot"></span>
+						</div>
+
+						<p class="helloBodyText">
+							I’ve also worked in routing algorithms, developing the engine of a routing automated agent for a powerful, flexible and easy-to-use inbound routing solution, able to be graphically configured and monitored in real time, in the context of an Alcatel-Lucent Enterprise partnership.
+						</p>
+
+						<p class="helloBodyText">
+							And I’ve worked in "low code" tool for automated agents (IVR and routing agents), capable of creating chatbots and voicebots using speech recognition and text-to-speech features, with an intuitive interface. Intent/entity management and recognition was executed with Microsoft LUIS as backend, in this case.
+						</p>
+
+						<p class="helloBodyText">
+							I'm currently working in a multinational team building cloud APIs for Microsoft Teams integration.
+						</p>
+
+						<div class="pSeparator">
+							<span class="pSeparatorDot"></span>
+						</div>
+
+						<p class="helloBodyText">
+							I like to make software, from the inception (research, brainstorm, architecture) to the end stages of development and testing. Patience is needed, and I have plenty to prototype, improve and test graphical interfaces or fine-tune neural networks. Designing a software product is always a challenge that requires patience, empathy and creative work. And hopefully a grain of Machine Learning.
+						</p>
+
+						<div class="pSeparator">
+							<a href="https://tecnico.ulisboa.pt/pt/" target="_blank">
+								<img src="images/ist2.png" title="Instituto Superior Técnico" />
+							</a>
+						</div>
+
+						<p class='helloBodyText'>
+							I have a Licentiate degree in Information Systems and Computer Engineering from <a href="https://tecnico.ulisboa.pt/pt/" target="_blank">Instituto Superior Técnico</a> (University of Lisbon).
+						</p>
+					</td>
+				</tr>
+			</tbody>
+	</table>
+
+	<div id="footer">
+		<div id="footerText">Ricardo Encarnação Santos</div>
+	</div>
+
+</body></html>

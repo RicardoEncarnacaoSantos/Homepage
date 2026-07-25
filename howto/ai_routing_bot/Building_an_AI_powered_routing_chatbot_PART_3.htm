@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+	<!-- Favicon -->
+
+	<link rel="shortcut icon" type="image/png" href="http://www.ricardoencarnacaosantos.com/images/favicon.png">
+
+	<!--
+	<link rel="shortcut icon" type="image/png" href="http://s5.postimg.org/juunvhwib/favicon.png">
+	<link rel="shortcut icon" type="image/x-icon" href="images/favicon2.ico?" />
+	-->
+	<!-- Open Graph -->
+	<meta property="og:title" content="AI Lookout">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="http://www.ricardoencarnacaosantos.com/">
+	<meta property="og:image" content="http://www.ricardoencarnacaosantos.com/images/cvRes.jpg">
+	<!--<meta property="og:image" content="http://s5.postimg.org/oycqs7sur/cv_Res.jpg">-->
+	<meta property="og:description" content="Ricardo Santos webpage">
+	<meta property="og:locale" content="en_US">
+	<meta property="og:locale:alternate" content="pt_PT">	
+	
+	<title>Building an AI-Powered Routing Chatbot</title>
+	<!-- Include my styles -->
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body class="bodyColored">
+  
+<div class="hdr reduced">
+	<table width="100%" cellspacing="0px" cellpadding="0px">
+		<tr>
+			<td width="10%">
+				<a href="../../howto.htm">					
+					<img src="../../images/ai_lookout_logo.jpg" alt="" title="Back to AI Lookout page" style=" width: 92px; height: 92px;"></img>
+				</a>
+			</td>
+			<td width="80%">
+				<div class="hdrTextContainer2">
+					<span id="hdrTextTitle">Building an AI-powered routing chatbot</span><br>
+					<span id="hdrTextSubtitle">Part 3 of 4</span><br>					
+				</div>
+				<div class="navigator">
+					<a title="Part 1: creating a Facebook Messenger bot" href="Building_an_AI_powered_routing_chatbot_PART_1.htm">
+						<span class="navigationDot"></span>
+					</a>					
+					<a title="Part 2: identifying the customer, the language and the sentiment" href="Building_an_AI_powered_routing_chatbot_PART_2.htm">
+						<span class="navigationDot"></span>
+					</a>
+					<span class="navigationDot Selected"></span>
+					<a title="Part 4: choosing the best human agent" href="Building_an_AI_powered_routing_chatbot_PART_4.htm">
+						<span class="navigationDot"></span>
+					</a>
+				</div>
+			</td>			
+			<td id="resLogo" width="10%" valign="bottom">
+				<a href="../../aboutme.htm">					
+					<img src="../../images/res_logo.jpg" alt="" title="Ricardo Santos" style=" width: 92px; height: 92px;"></img>
+				</a>
+			</td>
+		</tr>
+	</table>
+</div>	
+	
+<div class="fixedContainer howto">
+   
+<div class="articleTitle">Identifying the intent of the customer using Microsoft LUIS</div>  
+<br> 
+    
+<p>
+At this point our bot <a href="Building_an_AI_powered_routing_chatbot_PART_1.htm">is available on Facebook Messenger</a>, responds in English or Spanish <a href="Building_an_AI_powered_routing_chatbot_PART_2.htm">according to the customer language</a>, and starts a conversation to identify the customer and receive the main question, detecting its sentiment.
+</p>
+
+<p>
+Now we'll want to identify the intent, or purpose, of the customer question <b>(step 6)</b>. More specifically, we'll want to guess if it is a sales issue or a support issue, in order to transfer to the proper department.
+</p>
+
+<img src="diagram_step6.jpg" title="Identifying the intent" alt="Identifying the intent" style=" width: 703px; height: 417px;">
+
+<br>
+<br>
+
+<p>
+Detecting the intent is not so easy as detecting the language or the sentiment, because it's a task that is specific to our business: only we know how our customers interact with our store and with which purposes. There's no pre-trained cloud service that we can use for that. 
+</p>
+
+<p>
+Fortunately, there are services that we can train to meet our goals. For this purpose we'll use Microsoft Language Understanding service, or <a href="https://www.luis.ai/home" target="_blank">LUIS</a>. LUIS can be trained with sentences from our customers and generalize knowledge to find the intent of unseen sentences.
+</p>
+
+<br>
+
+<p><span class="numberedList">1. </span>Get a LUIS subscription key</p>
+
+<p>First you need to subscribe LUIS in Microsoft Azure and get a LUIS subscription key. You can find instructions <a href="https://docs.microsoft.com/en-us/azure/cognitive-services/luis/azureibizasubscription" target="_blank">here</a>. This key will be used in all the requests you send to LUIS.
+</p>
+
+<br>
+<br>
+
+<p><span class="numberedList">2. </span>Go to the LUIS page of your region (<a href="https://eu.luis.ai" target="_blank">https://eu.luis.ai</a> in our case) and create an app. An app is associated to a given culture. Set the culture to English (another app must be created for Spanish).
+</p>
+
+<img src="LUIS_2_create_app.jpg" title="Creating an app in LUIS" alt="Creating an app in LUIS" style=" width: 424px; height: 342px;"><br>
+
+<br>
+<br>
+
+<p><span class="numberedList">3. </span>Select "Intents" on the left and click "Create a new intent".</p>
+<img src="LUIS_3_start_app.jpg" title="Creating an intent" alt="Creating an intent" style=" width: 438px; height: 308px;">
+
+<br>
+<br>
+
+<p><span class="numberedList">4. </span>Let's call it "Sales". </p>
+<img src="LUIS_5_create_intent.jpg" title="Creating the Sales intent" alt="Creating the Sales intent" style=" width: 434px; height: 195px;">
+
+<br>
+<br>
+
+<p><span class="numberedList">5. </span>Ok, we've created our Sales intent. Now we'll want to add some sentences that we think our customers could use to buy something in our store. Add as many as possible, as they will be the training set for LUIS, allowing it to correctly classify unseen sentences in production phase.
+</p>
+
+<img src="LUIS_6_sales_intent.jpg" title="Sales intent - some utterances" alt="Sales intent - some utterances" style=" width: 655px; height: 412px;">
+
+<br>
+<br>
+
+<p><span class="numberedList">6. </span>Let's create another intent called "Support" and repeat the process. 
+</p>
+
+<img src="LUIS_6_support_intent.jpg" title="The Support intent - some utterances" alt="The Support intent - some utterances" style=" width: 656px; height: 403px;">
+
+<br>
+<br>
+
+<p><span class="numberedList">7. </span>Having enough Sales and Support examples we should now train the app. Click on the "Train" button (upper right corner). If train succeeds, it will change the color to green.
+</p>
+
+<img src="LUIS_10_train.jpg" title="Let's train!" alt="Let's train!" style=" width: 426px; height: 37px;">
+
+<br>
+<br>
+
+<p><span class="numberedList">8. </span>After being trained, the app can be tested. Press the "Test" button (upper right corner), type unseen utterances and check the result. If the result is incorrect, you can fix the classification manually and retrain.
+</p>
+
+<img src="LUIS_10_test.jpg" title="Let's test!" alt="Let's test!" style=" width: 230px; height: 187px;">
+
+<br>
+<br>
+
+<p><span class="numberedList">9. </span>Publish the app to make it available: go to "Publish" section and click the "Publish" button.
+</p>
+
+<img src="LUIS_11_publish.jpg" title="Publishing" alt="Publishing" style=" width: 428px; height: 195px;">
+
+<br>
+<br>
+
+<p><span class="numberedList">10. </span>Ok, we've created the intents, trained, tested and published the system. It's time to call it from our bot. For that we'll need a LUIS endpoint - an URL that we can call to request the service. At the bottom of the "Publish" section you can find your key and the corresponding 
+endpoint.
+</p>
+
+<p><img src="LUIS_11_after_publish_URL.jpg" title="Our LUIS endpoint" alt="Our LUIS endpoint" style=" width: 962px; height: 251px;"><br>
+</p>
+
+<p><span class="numberedList">11. </span>Aren't we missing something? Yes: the Spanish culture. Create a new app for Spanish culture and repeat all the process with Spanish utterances. 
+</p>
+
+<br>
+<br>
+
+<h2>Calling the LUIS endpoints from our code</h2>
+
+<img src="LUIS_endpoints.jpg" title="LUIS endpoints" alt="LUIS endpoints" style=" width: 398px; height: 178px;">
+
+<p>If things go as expected, we now have a LUIS endpoint for the English culture and a LUIS endpoint for the Spanish culture, and we can call 
+them from our code to guess the intents of English and Spanish sentences. A good tutorial on how to do it using Python can be found <a href="https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-get-started-python-get-intent" target="_blank">here</a>.
+</p>
+
+<p>The LUIS calls are located in file file TextAnalytics.py. You must setup your LUIS subscription key, created on step 1, and your LUIS base 
+URLs, referenced on step 10.
+</p>
+
+<pre><code class="s">        # Needed for Microsoft Language Understanding (LUIS) service        
+        self.LUIS_subscription_key = "Replace by your LUIS subscription key"
+        self.LUIS_en_base_url = "Replace by your LUIS endpoint for English text"  # ex: https://westeurope.api.cognitive.microsoft.com/luis/v2.0/apps/xxxxx
+        self.LUIS_es_base_url = "Replace by your LUIS endpoint for Spanish text"  # ex: https://westeurope.api.cognitive.microsoft.com/luis/v2.0/apps/yyyyy
+</code></pre>
+
+<p>The intent is returned by the <i>guess_intent</i> method, calling the appropriate LUIS endpoint. 
+</p>
+
+<pre><code class="m">    def guess_intent(self, text, language, verbose=False):
+        """ Guesses the intent of a given text.
+            Returns the intent: "sales", "support" or "other". 
+            Note: this method uses Microsoft LUIS to extract the intent,
+            which in turn must be configured and trained manually in the LUIS website
+            (the european version https://eu.luis.ai/home was used in this sample).
+        """
+
+        headers = {
+            # Request headers
+            'Ocp-Apim-Subscription-Key': self.LUIS_subscription_key,
+        }
+
+        params ={
+            # Query parameter
+            'q': text,
+            # Optional request parameters, set to default values
+            'timezoneOffset': '0',
+            'verbose': 'true',
+            'spellCheck': 'false',
+            'staging': 'false',
+        }
+
+        ret = "other"
+
+        try:
+            if language=="es":
+                # Spanish culture
+                response = requests.get(self.LUIS_es_base_url, headers=headers, params=params)
+                intents = response.json()                       
+                top_scoring_intent = intents["topScoringIntent"]
+                if top_scoring_intent["intent"] == "Ventas":
+                    ret = "sales"
+                if top_scoring_intent["intent"] == "Soporte":
+                    ret = "support"        
+                score = top_scoring_intent["score"]
+                if score &lt; 0.4:
+                    # Return "other" if there is not enough confidence on any known intent...
+                    ret = "other"
+            else:
+                # English culture
+                response = requests.get(self.LUIS_en_base_url, headers=headers, params=params)
+                intents = response.json()                       
+                top_scoring_intent = intents["topScoringIntent"]
+                if top_scoring_intent["intent"] == "Sales":
+                    ret = "sales"
+                if top_scoring_intent["intent"] == "Support":
+                    ret = "support"        
+                score = top_scoring_intent["score"]
+                if score &lt; 0.4:
+                    # Return "other" if there is not enough confidence on any known intent...
+                    ret = "other"
+        except Exception as e:
+            print("Error in guess_intent: {}".format(e))
+            ret = "other"
+
+        if verbose:
+            print("LUIS return for input '{}':".format(text))
+            pprint(intents)        
+            print("guess_intent returning '{}'".format(ret))
+
+        return ret
+</code></pre>
+
+<br>
+
+<p>
+And that's it! Our bot is now able to guess if a customer wants to talk with the sales department or the support department. Don't forget that LUIS will be more accurate if you train it with many utterances, and that you should check once in a while if there are customer sentences classified incorrectly and, if needed, classify them manually and retrain the system.
+</p>
+
+<p>
+In the next and final post of this series we'll show how to use all this information to select the best human agent to handle the interaction. Until then, happy coding!</p>
+
+<br>
+
+<div style="text-align: left;"><a href="https://github.com/RicardoEncarnacaoSantos/AIRoutingBot" target="_blank"><img src="download.jpg" title="Download the code from GitHub" alt="Download the code from GitHub" style="  width: 160px; height: 37px; border: 0px solid;"></a></div>
+
+<br>
+
+<p>
+Previous: <a href="Building_an_AI_powered_routing_chatbot_PART_2.htm">identifying the customer, the language and the sentiment using Microsoft Text Analytics services</a><br>
+Next: <a href="Building_an_AI_powered_routing_chatbot_PART_4.htm">choosing the best human agent using a neural network</a>
+</p>
+
+<br>
+
+</div>
+
+<div id="footer">
+	<div id="footerText">Ricardo Encarnação Santos</div>
+</div>
+
+</body></html>

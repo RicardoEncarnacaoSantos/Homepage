@@ -1,0 +1,363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	
+	<!-- Favicon -->
+
+	<link rel="shortcut icon" type="image/png" href="http://www.ricardoencarnacaosantos.com/images/favicon.png">
+
+	<!--
+	<link rel="shortcut icon" type="image/png" href="http://s5.postimg.org/juunvhwib/favicon.png">
+	<link rel="shortcut icon" type="image/x-icon" href="images/favicon2.ico?" />
+	-->
+	<!-- Open Graph -->
+	<meta property="og:title" content="AI Lookout">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="http://www.ricardoencarnacaosantos.com/">
+	<meta property="og:image" content="http://www.ricardoencarnacaosantos.com/images/cvRes.jpg">
+	<!--<meta property="og:image" content="http://s5.postimg.org/oycqs7sur/cv_Res.jpg">-->
+	<meta property="og:description" content="Ricardo Santos webpage">
+	<meta property="og:locale" content="en_US">
+	<meta property="og:locale:alternate" content="pt_PT">	
+	
+	<title>Building an AI-Powered Routing Chatbot</title>
+	<!-- Include my styles -->
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body class="bodyColored">
+  
+<div class="hdr reduced">
+	<table width="100%" cellspacing="0px" cellpadding="0px">
+		<tr>
+			<td width="10%">
+				<a href="../../howto.htm">					
+					<img src="../../images/ai_lookout_logo.jpg" alt="" title="Back to AI Lookout page" style=" width: 92px; height: 92px;"></img>
+				</a>
+			</td>
+			<td width="80%">
+				<div class="hdrTextContainer2">
+					<span id="hdrTextTitle">Building an AI-powered routing chatbot</span><br>
+					<span id="hdrTextSubtitle">Part 1 of 4</span><br>
+				</div>
+				<div class="navigator">
+					<span class="navigationDot Selected"></span>
+					<a title="Part 2: identifying the customer, the language and the sentiment" href="Building_an_AI_powered_routing_chatbot_PART_2.htm">
+						<span class="navigationDot"></span>
+					</a>
+					<a title="Part 3: identifying the intent of the customer" href="Building_an_AI_powered_routing_chatbot_PART_3.htm">
+						<span class="navigationDot"></span>
+					</a>
+					<a title="Part 4: choosing the best human agent" href="Building_an_AI_powered_routing_chatbot_PART_4.htm">
+						<span class="navigationDot"></span>
+					</a>
+				</div>
+			</td>			
+			<td id="resLogo" width="10%" valign="bottom">
+				<a href="../../aboutme.htm">					
+					<img src="../../images/res_logo.jpg" alt="" title="Ricardo Santos" style=" width: 92px; height: 92px;"></img>
+				</a>
+			</td>
+		</tr>
+	</table>
+</div>	
+	
+<div class="fixedContainer howto">
+   
+<div class="articleTitle">Creating a Facebook Messenger bot using Python and the Facebook API</div>  
+<br> 
+   
+<p>
+Chatbots are becoming popular as a new way for companies to improve customer service and engage new customers.
+</p>
+
+<p>
+But what is a chatbot? It’s a computer program running on the other side of an instant messaging channel, receiving your input and selecting the best response or the best action to do. And that’s great, but is also a quite generic definition. A chatbot can be anything. It can engage in a conversation (entertaining, coaching, self-help…), give some information (tell the weather, the news, a medical diagnosis, a FAQ), or do some specific task (schedule a meeting, play music, book a table, 
+buy tickets). It can use AI at several levels or no AI at all. Used for customer service, it can be as simple as an <a href="https://en.wikipedia.org/wiki/Interactive_voice_response" target="_blank">IVR </a>system, guiding the conversation with sets of multiple choices, or a more complex program that tries to understand user sentences using <a href="https://en.wikipedia.org/wiki/Natural-language_processing" target="_blank">natural-language processing</a> (NLP) and take an action determined by other AI algorithms.
+</p>
+
+<p>
+Yes, you’ve already guessed: this post is not about bots in general. It’s about a bot specialized in choosing humans by using machine learning services and algorithms.</p>
+
+<div style="text-align: center;"><img src="logo.png" title="Appliances of the Future - the Intelligence of Things" alt="Appliances of the Future - the Intelligence of Things" style=" width: 573px; height: 246px;"><br>
+</div>
+
+<p>
+As motivation let’s imagine that, in the future, we have this fictional appliance store that sells all kinds of Internet-of-Things, intelligent appliances, like talking blenders, learning food processors and conscious toasters. Our store has a sales department and a support department, and it uses Facebook to interact with the customers. </p>
+
+<p>
+Our goal is to have a Facebook Messenger (FB) chatbot available 24/7 as 1<sup>st</sup> line assistance, and 6 human agents in the 2<sup>nd</sup> line. The bot should be bilingual and intelligent enough to handle the first part of the conversation: identify the customer and receive the question. Finally, by analyzing the question, it must predict the best human agent to handle the interaction and redirect the conversation. 
+</p>
+
+<p>
+In the end, from the customer point of view, we want something like this:
+</p>
+
+<img src="chat_0.png" alt="" style=" width: 440px; height: 314px;">
+
+<p>
+In a series of 4 posts we’ll present an example of a bot capable of doing this, in Python, while highlighting relevant parts of the code. If you’re interested, you can get the full code from <a href="https://github.com/RicardoEncarnacaoSantos/AIRoutingBot" target="_blank">GitHub</a>.
+ </p>
+ 
+ <p>
+The full example will show a way to create a FB chatbot, detect the language, the sentiment and the intent of the user input, and finally select the most capable and available human agent to handle the customer question, according to all the information detected, the skills of the agent, the customer profile and the history of interactions between the customer and the contact center.
+</p>
+
+<img src="diagram_step1.jpg" title="Creating a FB Messenger chatbot" alt="Creating a FB Messenger chatbot" style=" width: 703px; height: 417px;">
+
+<br>
+<br>
+<br>
+
+<p>
+In step 1, we’ll create a bot available in FB Messenger. In steps 2, 3 and 4 we'll detect the language using a machine learning cloud service and we'll define the conversation flow. In steps 5 and 6 we’ll use more machine learning cloud services to identify the sentiment and the intent of the user input. In step 7 we’ll build and train a deep <a href="https://en.wikipedia.org/wiki/Artificial_neural_network" target="_blank">artificial neural network</a> to select the best human agent.
+</p>
+
+<p>
+All agents and customers are fictional and there will be no real transfer of the conversation after step 7. The goal is to show a way to use machine learning to select agents, not only using cloud cognitive services but also building a custom model.
+</p>
+
+<p>
+This post will cover the <span style="font-weight: bold;">first step</span> of the diagram, showing how to create a very simple but operational FB chatbot. Let's start!<br>
+</p>
+
+<br>
+
+<h3>Creating a FB chatbot</h3>
+
+<p>
+For this step we’ve used <a href="https://www.twilio.com/blog/2017/12/facebook-messenger-bot-python.html" target="_blank">this informative Twilio post</a> as a starting point, making some modifications to use the new <a href="https://developers.facebook.com/docs/graph-api/changelog/version3.0" target="_blank">Facebook Graph API 3.0</a>.</p>
+
+<p>
+The Python version used was 3.6.5. You can download it <a href="https://www.python.org/downloads/" target="_blank">here</a>. 
+</p>
+
+<p>
+We’ll start by creating an endpoint: the URL that will be used by Facebook to send us the user messages and get our responses to show to the user. For that we’ll use <a href="http://flask.pocoo.org/" target="_blank">Flask</a>, a lightweight web framework.
+</p>
+
+<img src="endpoint.png" title="The bot endpoint" alt="The bot endpoint" style=" width: 470px; height: 202px;"><br>
+
+<p>
+To make a first test, save the following code in a file named test.py, open a command prompt 
+and run it (<span class="codeSample">&gt; python test.py</span>). These lines will create an endpoint on port 5001 prepared to handle Facebook messages.
+</p>
+
+<pre><code class="xl">from flask import Flask, request    # Installation: pip3 install Flask==1.0
+import requests                     # Installation: pip3 install requests==2.18.4
+from pprint import pprint
+
+# app will be used to create a light web server that will receive the user input 
+# (from a FB Messenger client) and respond
+app = Flask(__name__)
+
+# The page access token must be generated in Facebook for Developers. 
+# This token is required to access Facebook APIs.
+ACCESS_TOKEN = 'Your access token'
+
+# This other token is used to verify if any message that reaches the bot
+# is an authentic request sent by Facebook. This will protect the bot from
+# unauthorized access. You must specify the token in Facebook for Developers,
+# when you define the webhook for this bot.
+VERIFY_TOKEN = 'AIRoutingBotToken'
+
+
+@app.route('/', methods=['GET', 'POST'])
+def handle_user_input():
+
+  try:
+      if request.method == 'GET':
+        # Before allowing people to message your bot, Facebook has implemented a verify token
+        # that confirms all requests that your bot receives came from Facebook. 
+        token_sent = request.args.get("hub.verify_token")
+        return verify_fb_token(token_sent)
+      else:    
+        # Get whatever message a user sent the bot
+        output = request.get_json()
+        
+        pprint(output)
+
+        for event in output['entry']:
+          messaging = event['messaging']
+          for message in messaging:
+            if message.get('message'):
+              text = message['message'].get('text')                
+
+              # Facebook Messenger ID from user so we know where to send response back to
+              recipient_id = message['sender']['id']
+                                       
+              if text:
+                print("Received '{0}' from {1}".format(text, recipient_id))
+                # Return this message to the user
+                response = "Welcome to Appliances of the Future!"
+                print("My response: '{}'".format(response))
+                send_message(recipient_id, response, True)                
+            
+  except Exception as e:
+      print("Error handling user input: {}".format(e))
+
+  return "My response"
+
+
+def verify_fb_token(token_sent):
+    """ Take token sent by facebook and verify it matches the verify token you sent
+    if they match, allow the request, else return an error 
+    """
+    if token_sent == VERIFY_TOKEN:
+        return request.args.get("hub.challenge")
+
+    return 'Invalid verification token'
+
+
+def send_message(recipient_id, message, verbose=False):
+    '''Send text message to the specified recipient.
+    https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message
+    Input:
+        recipient_id: recipient id to send to
+        message: message to send
+    Output:
+        Response from API as <dict>
+    '''
+    params = {
+        "access_token": ACCESS_TOKEN
+    }    
+    payload = {        
+        'messaging_type': 'RESPONSE',
+        'recipient': {
+            'id': recipient_id
+        },
+        'message': {
+            'text': message
+        }        
+    }
+    response  = requests.post("https://graph.facebook.com/v3.0/me/messages", params=params, json=payload)
+    result = response.json()
+
+    if verbose:
+        print("send_message result:")
+        pprint(result)
+
+    return result
+
+
+if __name__ == '__main__':
+    app.run(port=5001, debug=True)
+
+
+</dict></code></pre>
+
+<p>
+When the code is executed, we can see it running on <b>http://127.0.0.1:5001/</b> (our machine, port 5001):
+</p>
+
+<img src="flask.png" alt="" style=" width: 795px; height: 235px;"><br>
+
+<br>
+
+<p>
+This means we now have a bot waiting for messages on port 5001, but it is trapped in the dark: it is not reachable outside our machine. We must dig a tunnel. An easy way to do it, at least in testing phase, is by using <a href="https://ngrok.com/download" target="_blank">ngrok </a>(in production phase you may want to host your code somewhere in the cloud to be available 24/7). After installing ngrok, open a Command Prompt window and type <span class="codeSample">&gt; ngrok http 5001</span>. This will expose our local web server, listening on port 5001, to the Internet, through a public URL created by ngrok.
+</p>
+
+<img src="ngrok.jpg" alt="" style=" width: 795px; height: 266px;"><br>
+
+<br>
+
+<p>
+Ok, now the bot can communicate with the outside world, but it has no one to talk to yet. We must connect it to Facebook.
+</p>
+
+<p><span class="numberedList">1. </span>Create a Facebook page</p>
+
+<p>
+  <p><span class="numberedList">2. </span>Go to <a href="https://developers.facebook.com/" target="_blank">Facebook for Developers</a>, create a developer account and a new app.</p>
+
+<img src="FB_0.jpg" title="Creating an app in FB for Developers" alt="Creating an app in FB for Developers" style=" width: 786px; height: 489px;"><br>
+
+<br>
+
+<p><span class="numberedList">3. </span>Click “Set Up” on the Messenger section</p>
+
+<img src="FB_1.jpg" title="Setup Messenger" alt="Setup Messenger" style=" width: 768px; height: 396px;"><br>
+
+<br>
+
+<p><span class="numberedList">4. </span>In the Settings tab, fill in the required basic settings.</p>
+
+<img src="FB_2.jpg" title="Basic settings" alt="Basic settings" style=" width: 729px; height: 442px;"><br>
+
+<br>
+
+<p><span class="numberedList">5. </span>Assure that your bot is running in your machine and ngrok is tunneling to a valid URL. In the Webhooks tab, subscribe 
+“messages”, click “Edit Subscription”, fill in the “Callback URL” with your ngrok URL, and set the Verify Token as "AIRoutingBotToken"  (you can set a different name as long as it matches the VERIFY_TOKEN in your code).&nbsp; 
+</p>
+
+<img src="FB_5_subscribe.jpg" title="Subscribe &quot;messages&quot;" alt="Subscribe &quot;messages&quot;" style=" width: 693px; height: 48px;"><br>
+
+<br>
+
+<img src="FB_5_edit_subscription.jpg" title="Edit subscription" alt="Edit subscription" style=" width: 654px; height: 246px;"><br>
+
+<br>
+
+<img src="FB_5_callback_url.jpg" title="Defining the callback URL" alt="Defining the callback URL" style=" width: 628px; height: 199px;"><br>
+
+<br>
+
+<p><span class="numberedList">6. </span>When you click “Verify and Save” Facebook will test the connection to your bot. If the test passes, FB accepts your 
+configuration and you should see a GET request reaching ngrok and your bot.
+</p>
+
+<img src="FB_6.jpg" alt="" style=" width: 716px; height: 139px;"><br>
+
+<br>
+
+<p><span class="numberedList">7. </span>Now subscribe the app to your FB business page. If don’t have one, create one. This will be the page used for the 
+customers to communicate with your bot. When you do it, FB will give you an Access Token. Copy and assign it to the ACCESS_TOKEN variable in your code.</p>
+
+<img src="FB_7.jpg" title="Subscribing the app to a FB page" alt="Subscribing the app to a FB page" style=" width: 852px; height: 469px;"><br>
+
+<br>
+
+<p><span class="numberedList">8. </span>Go to Roles tab and add a tester.</p>
+
+<img src="FB_8.jpg" title="Adding a tester" alt="Adding a tester" style=" width: 788px; height: 282px;"><br>
+
+<br>
+<br>
+
+<p><span class="numberedList">9. </span>Make your test user start a conversation with the bot. If everything is ok, you’ll receive a response.</p>
+
+<img src="FB_9.jpg" title="My first reply to the outer world" alt="My first reply to the outer world" style=" width: 404px; height: 93px;">
+
+<br>
+<br>
+
+<p>Awesome! We have the bot chatting with us. It does nothing more than replying with the same message, but we now have the foundations to start building the routing functionality.
+</p>
+
+<p>In the next post we’ll enhance the bot to identify the customer, ask for the his/her question and use cognitive cloud services to detect the language and the sentiment.
+</p>
+
+<p>Until then, happy coding!</p><br>
+
+<br>
+
+<div style="text-align: left;"><a href="https://github.com/RicardoEncarnacaoSantos/AIRoutingBot" target="_blank"><img src="download.jpg" title="Download the code from GitHub" alt="Download the code from GitHub" style="width: 160px; height: 37px; border: 0px solid;"></a></div>
+
+<br>
+
+<p>
+Next: <a href="Building_an_AI_powered_routing_chatbot_PART_2.htm">identifying the customer, the language and the sentiment using Microsoft Text Analytics services</a>
+</p>
+
+<br>
+
+</div>
+
+<div id="footer">
+	<div id="footerText">Ricardo Encarnação Santos</div>
+</div>
+
+</body></html>

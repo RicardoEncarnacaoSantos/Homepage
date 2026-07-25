@@ -1,0 +1,604 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	
+	<!-- Favicon -->
+
+	<link rel="shortcut icon" type="image/png" href="http://www.ricardoencarnacaosantos.com/images/favicon.png">
+
+	<!--
+	<link rel="shortcut icon" type="image/png" href="http://s5.postimg.org/juunvhwib/favicon.png">
+	<link rel="shortcut icon" type="image/x-icon" href="images/favicon2.ico?" />
+	-->
+	<!-- Open Graph -->
+	<meta property="og:title" content="AI Lookout">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="http://www.ricardoencarnacaosantos.com/">
+	<meta property="og:image" content="http://www.ricardoencarnacaosantos.com/images/cvRes.jpg">
+	<!--<meta property="og:image" content="http://s5.postimg.org/oycqs7sur/cv_Res.jpg">-->
+	<meta property="og:description" content="Ricardo Santos webpage">
+	<meta property="og:locale" content="en_US">
+	<meta property="og:locale:alternate" content="pt_PT">
+		
+	<title>Building an AI-Powered Routing Chatbot</title>
+	<!-- Include my styles -->
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body class="bodyColored">
+  
+<div class="hdr reduced">
+	<table width="100%" cellspacing="0px" cellpadding="0px">
+		<tr>
+			<td width="10%">
+				<a href="../../howto.htm">					
+					<img src="../../images/ai_lookout_logo.jpg" alt="" title="Back to AI Lookout page" style=" width: 92px; height: 92px;"></img>
+				</a>
+			</td>
+			<td width="80%">
+				<div class="hdrTextContainer2">
+					<span id="hdrTextTitle">Building an AI-powered routing chatbot</span><br>
+					<span id="hdrTextSubtitle">Part 4 of 4</span><br>					
+				</div>
+				<div class="navigator">
+					<a title="Part 1: creating a Facebook Messenger bot" href="Building_an_AI_powered_routing_chatbot_PART_1.htm">
+						<span class="navigationDot"></span>
+					</a>					
+					<a title="Part 2: identifying the customer, the language and the sentiment" href="Building_an_AI_powered_routing_chatbot_PART_2.htm">
+						<span class="navigationDot"></span>
+					</a>
+					<a title="Part 3: identifying the intent of the customer" href="Building_an_AI_powered_routing_chatbot_PART_3.htm">
+						<span class="navigationDot"></span>
+					</a>					
+					<span class="navigationDot Selected"></span>
+				</div>
+			</td>			
+			<td id="resLogo" width="10%" valign="bottom">
+				<a href="../../aboutme.htm">					
+					<img src="../../images/res_logo.jpg" alt="" title="Ricardo Santos" style=" width: 92px; height: 92px;"></img>
+				</a>
+			</td>
+		</tr>
+	</table>
+</div>	
+	
+<div class="fixedContainer howto">
+   
+<div class="articleTitle">Choosing the best human agent with a neural network built using Keras and Tensorflow</div>  
+
+<br> 
+    
+<p>
+Our bot already does a lot of things: asks the customer id and identifies the language, sentiment and intent of the customer question. There's only one last step left: choosing the best human agent to handle the interaction <b>(step 7)</b>. For that we'll not use any machine learning service. This time we'll build a machine learning model ourselves.
+</p>
+
+<img src="diagram_step7.jpg" alt="" style=" width: 703px; height: 417px;"><br>
+
+<p>
+After guessing the language (English or Spanish), the sentiment (positive, neutral or negative) and the intent (sales or support) of the customer question, it's time select the best agent to handle the interaction. This will be done in 2 phases: candidate generation and ranking. But first things first: we need some agents to start with. 
+</p>
+
+<br>
+
+<h3>A set of fictional agents</h3>
+
+<img src="agents.jpg" title="Our fictional agents" alt="Our fictional agents" style=" width: 590px; height: 92px;"><br>
+
+<p>
+Six agents, with different profiles, are defined in file Agents.py.
+</p>
+
+<pre><code class="m">        self.agents = [
+            {"agent id": 0, "name": "Mike",   "en": 0.75, "es": 0.75, "support": 1.00, "sales": 0.00},
+            {"agent id": 1, "name": "Sandra", "en": 0.50, "es": 1.00, "support": 1.00, "sales": 0.00},
+            {"agent id": 2, "name": "John",   "en": 1.00, "es": 0.00, "support": 0.00, "sales": 1.00},
+            {"agent id": 3, "name": "Betty",  "en": 0.50, "es": 0.50, "support": 0.00, "sales": 1.00},
+            {"agent id": 4, "name": "Harry",  "en": 0.75, "es": 0.00, "support": 1.00, "sales": 1.00},
+            {"agent id": 5, "name": "Chris",  "en": 0.20, "es": 0.75, "support": 1.00, "sales": 1.00}]
+</code></pre>
+
+<p>Each agent profile will be defined by an identifier, a name and a set of skills:
+	<br>
+	<ul>
+	  <li>"en" and "es" will be the English and Spanish levels, from 0 to 1</li><br>
+	  <li>"support" and "sales" will be the skills to handle support and sales interactions: 1 if the agent can do it, 0 otherwise</li>
+	</ul>
+</p>
+
+<br>
+
+<h3>Candidate generation</h3>
+
+<img src="candidates.jpg" title="Candidates that talk Spanish for a Support issue" alt="Candidates that talk Spanish for a Support issue" style=" width: 565px; height: 254px;"><br>
+
+<br>
+
+<p>
+At this point we'll narrow down the list of candidates to the ones that have at least the minimum skills to handle the interaction. Following the example in the picture,
+ if the detected language was Spanish and the detected intent was Support, the only agents we'll consider for ranking will be Mike, Sandra and Chris, the only ones that talk Spanish and know how to handle support issues. All others will be eliminated at this phase.
+</p>
+
+<p>The <i>generate_candidates</i> method does all this. By summing the needed skills multiplied by the respective weights (agent skill levels), it finds out if an agent is skilled enough to handle an interaction with a given language and intent. This is calculated for all the agents, eliminating the ones that have no adequate skills at all. In the end it returns an ordered list of the best candidates (limited to a number defined by the <i>max_number_of_candidates</i> variable).
+</p>
+
+<pre><code class="l">    def generate_candidates(self, language, intent, verbose=False):
+        """ Returns a list with a number of candidates (yet to be ranked).
+            Candidates are selected according to their skills for handling
+            the language and intent of the interaction.
+        """
+        candidates = []
+
+        en_weight = 0.0
+        es_weight = 0.0
+        sales_weight = 0.0
+        support_weight = 0.0
+
+        if language=="en":
+            en_weight = 1.0  # English skill needed
+        elif language=="es":
+            es_weight = 1.0  # Spanish skill needed
+
+        if intent=="sales":
+            sales_weight = 1.0      # Sales skill needed
+        elif intent=="support":
+            support_weight = 1.0    # Support skill needed
+
+        for agent in self.agents.agents:
+            skill_for_the_job = \
+                en_weight * agent["en"] + \
+                es_weight * agent["es"] + \
+                sales_weight * agent["sales"] + \
+                support_weight * agent["support"]        
+            # In a real case we may want to filter here the unavailable agents
+            # (not logged, not ready to work or already busy)
+            # or the ones that do not verify some minimum skills
+            # In this example we filter only those who have absolutely
+            # no skills for the job.
+            if skill_for_the_job &gt; 0.:
+                candidates.append((agent["agent id"], skill_for_the_job))
+         
+        # Sort by 'skill_for_the_job' column
+        candidates = sorted(candidates, key=lambda entry: entry[1], reverse=True)   
+
+        # We want the first N only
+        candidates = candidates[:self.max_number_of_candidates]
+
+        if verbose:
+            if len(candidates) == 0:
+                print("No candidates found")
+            else:
+                print("Candidates found:")
+                for candidate in candidates:
+                    print("{0} (skill for the job = {1})".format(self.agents.get_agent_name(candidate[0]), candidate[1]))
+
+        # Return the agent ids
+        return [row[0] for row in candidates]
+</code></pre>
+
+<p>
+There's no need for a complex candidate generation algorithm because it's very unlikely to have millions of agents, although the criteria is very simplified here. In a real system you would probably want to filter the unavailable (busy, not logged...) agents, and you would probably want to consider a different minimum for each skill (only agents with more than 20% of Spanish skill would be allowed to answer Spanish questions, for example).
+</p>
+
+<br>
+
+<h3>Ranking</h3>
+
+<img src="ranking.jpg" title="Ranking the candidates" alt="Ranking the candidates" style=" width: 641px; height: 380px;"><br>
+
+<p>
+We could just stop here and select the top candidate found by <i>generate_candidates</i>. But that would take into account the agents skills only. At this point 
+all we know is who's the best agents to handle an interaction in a given culture, for a given department. But that agent may not be the best one to chat with 
+this specific customer, considering the customer profile, the sentiment and all the past interactions. For example, some agents can have more empathy than others and deal better with an angry customer, and some agents can be better at selling products to younger customers, even if they are less skilled in their language. 
+</p>
+
+<p>
+An algorithm like that is very hard to define by a human, because many times it's hard to calculate the likelihood of an agent being successful handling a specific interaction: there are just too many variables involved. That's why we'll need a more complex machine learning model (the crystal ball in the picture) to rank the 
+candidates and see in fact who is the best one according to all the information we can use, including customer information and interactions history. For that task we'll use an <a href="https://en.wikipedia.org/wiki/Artificial_neural_network" target="_blank">artificial neural network</a> (ANN).
+</p>
+
+<br>
+
+<h4>Installing Keras and Tensorflow</h4>
+
+<img src="Keras_tensorflow.jpg" title="Keras + Tensorflow" alt="Keras + Tensorflow" style=" width: 150px; height: 60px;">
+
+<p>
+We'll use <a href="https://keras.io/" target="_blank">Keras</a>, a high-level deep learning library that enables quick creation of neural networks, with <a href="https://www.tensorflow.org/" target="_blank">Tensorflow </a>as backend. Tensorflow was developed by Google and is an open source machine learning framework for high performance numerical computation. 
+</p>
+
+<p>
+So first you'll have to install Tensorflow and Keras in your machine. You can check for instructions <a href="https://keras.io/#installation" target="_blank">here </a>and <a href="https://www.tensorflow.org/install/" target="_blank">here</a>.
+</p>
+
+<br>
+
+<h4>Creating the neural network<br>
+</h4>
+
+<p>
+All the code related to the neural network can be found in file RankingNetwork.py. Explaining how a neural network works is out of the scope of this post. 
+Let's just keep in mind that a ANN is a machine learning model that excels at approximating functions and make predictions - an excellent crystal ball! And in our case we'll want a function than receives contact, agent and interaction data, and predicts a score: a number between 0 and 1 measuring the success of the interaction.
+</p>
+
+<img src="ann.jpg" title="Neural network for ranking" alt="Neural network for ranking" style=" width: 773px; height: 364px;"><br>
+
+<br>
+
+<p>
+The picture shows how the inside of our crystal ball looks like. It receives data associated to the customer, the interaction and the agent. The input connects to a 50-neuron hidden layer, which connects to a 35-neuron hidden layer, which in turn connects to a 20-neuron hidden layer. At the end we have the score as output.
+</p>
+
+<p>
+The hyperparameters (number of neurons and layers, optimizer, activation functions, batch size, etc.) were set by trial-and-error. You should test different configurations to see what works best for your training set. 
+</p>
+
+<p>
+In the code, the ANN is defined by a few lines executed when the <i>AIRouter</i> object creates the <i>RankingNetwork </i>object.
+</p>
+
+<pre><code class="m">    def create_network(self):
+        """ Creates the neural network. 
+        """
+        model = Sequential()
+
+        model.add(Dense(50, input_shape=(self.input_size,), activation="relu"))
+        model.add(BatchNormalization())
+        model.add(Dense(35, activation="relu")) 
+        model.add(Dropout(0.15))       
+        model.add(Dense(20, activation="relu"))
+        model.add(Dense(1))
+
+        model.compile(optimizer='adam', loss='mse', metrics=['mae', 'acc'])
+
+        return model
+</code></pre>
+
+<br>
+
+<h4>Training the neural network</h4>
+
+<img src="training.jpg" title="Training the neural network" alt="Training the neural network" style=" width: 747px; height: 494px;"><br>
+
+<br>
+
+<p>
+Unfortunately, our crystal ball is not really magic: it must be trained with labeled data to adjust itself in order to be able to predict scores as accurately as possible. For that we'll need a training set. We'll use a set of past interactions, and we'll feed the network not only with the input but also with the correct output for training. The "correct output" is also called label, and in this case it would be the real score given for each interaction, being the score a number that measures the success of the 
+interaction from 0 to 1 (in a real case it can be the result of a quality survey or some other indicator with business meaning).
+</p>
+
+<p>
+The <i>CRM </i>class, in file CRM.py, provides a small hardcoded history of interactions that will be used to build our training set.
+</p>
+
+<pre><code class="m">        self.history = [
+            {"contact id": 0, "handled by": 0, "language": "en", "sentiment": 0.50, "category": "support", "score": 0.70 },
+            {"contact id": 0, "handled by": 1, "language": "en", "sentiment": 0.20, "category": "support", "score": 0.90 },
+            {"contact id": 1, "handled by": 5, "language": "en", "sentiment": 0.10, "category": "support", "score": 0.30 },
+            {"contact id": 2, "handled by": 3, "language": "es", "sentiment": 0.50, "category": "sales",   "score": 0.85 },
+            {"contact id": 2, "handled by": 5, "language": "es", "sentiment": 0.30, "category": "support", "score": 0.70 },
+            {"contact id": 2, "handled by": 1, "language": "es", "sentiment": 0.90, "category": "sales",   "score": 0.00 },
+            {"contact id": 1, "handled by": 4, "language": "en", "sentiment": 0.20, "category": "support", "score": 0.00 },
+            {"contact id": 1, "handled by": 5, "language": "en", "sentiment": 0.00, "category": "support", "score": 0.85 },
+            {"contact id": 0, "handled by": 1, "language": "en", "sentiment": 0.50, "category": "support", "score": 0.75 },
+            {"contact id": 0, "handled by": 2, "language": "en", "sentiment": 1.00, "category": "sales",   "score": 0.20 },
+            {"contact id": 0, "handled by": 3, "language": "en", "sentiment": 0.80, "category": "sales",   "score": 0.00 },
+            {"contact id": 1, "handled by": 2, "language": "en", "sentiment": 0.50, "category": "sales",   "score": 0.80 },
+            {"contact id": 1, "handled by": 3, "language": "en", "sentiment": 0.60, "category": "sales",   "score": 0.00 },
+            {"contact id": 2, "handled by": 5, "language": "es", "sentiment": 0.90, "category": "sales",   "score": 1.00 },
+            {"contact id": 1, "handled by": 4, "language": "en", "sentiment": 0.10, "category": "support", "score": 0.90 },
+            {"contact id": 2, "handled by": 5, "language": "es", "sentiment": 1.00, "category": "sales",   "score": 1.00 },
+            {"contact id": 0, "handled by": 0, "language": "en", "sentiment": 0.40, "category": "support", "score": 0.60 },
+            {"contact id": 1, "handled by": 4, "language": "en", "sentiment": 0.20, "category": "support", "score": 1.00 },
+            {"contact id": 2, "handled by": 3, "language": "es", "sentiment": 0.90, "category": "sales",   "score": 1.00 }]
+</code></pre>
+
+<p>
+To train, the application must be launched in training mode, with the command line parameter "-train". You should do this at least once before starting the bot in normal mode.
+</p>
+
+<img src="training_prompt.jpg" alt="" style=" width: 245px; height: 24px;">
+
+<p>Instead of connecting to Facebook and start waiting for messages, the bot will execute 500 epochs of training by calling the <i>train </i>function.
+</p>
+
+<pre><code class="l">    def train(self, epochs):
+        """ Trains the network with the crm data. 
+        """
+        # Let's first assemble the training set to feed the network
+        x = []  # Input data
+        y = []  # Labels
+
+        print("Creating the training dataset...")
+
+        for interaction in self.crm.history:
+            sample = self.build_input_sample(
+                interaction["contact id"], 
+                interaction["language"], 
+                interaction["sentiment"], 
+                interaction["category"], 
+                interaction["handled by"])
+            x.append(sample)
+            y.append(interaction["score"])
+
+        x = np.array(x)
+        y = np.array(y) 
+
+        print("Training for {} epochs".format(epochs))
+
+        # Train for n epochs
+        results = self.model.fit(x=x, y=y, epochs=epochs, batch_size=32)
+        
+        print("Model is trained")
+
+        # Saves weights (network state after training)
+        # to be loaded on future executions
+        self.model.save_weights("weights.h5")
+</code></pre>
+
+<p>
+The <i>train </i>function starts by building the training set, converting each history entry into a training sample using the <i>build_input_sample</i>
+ method, which gathers information from history, contact profile and agent profile, and combines everything in a list of numbers, or a vector. The list of all these vectors forms the training set.
+</p>
+
+<img src="embeddings.jpg" title="Language and category vectors (embeddings)" alt="Language and category vectors (embeddings)" style=" width: 371px; height: 92px;"><br>
+
+<p>
+As a side note, the postal code will be converted to the approximate GPS coordinates of that region, in the form <i>[latitude, longitude]</i>, and this is achieved by using the <a href="https://developers.google.com/maps/documentation/geocoding/intro" target="_blank">Google Maps Geocoding API</a>. You must subscribe this Google service and use your own key in <i>get_GPS_coordinates</i> function, file Geocoding.py.
+</p>
+
+<p>
+After that the <i>train</i> function calls <i>model.fit</i> passing the training set (our inputs (x) and labels (y)), and Keras does the hard work of training the ANN.
+</p>
+
+<br>
+
+<h4>Persistence of knowledge<br>
+</h4>
+
+<p>
+The network learns by adjusting its internal variables, or weights, during training. That knowledge must be kept somewhere and restored whenever the bot is launched.
+</p>
+
+<p>When the <i>train</i> function finishes, it saves the weights in a file named "weights.h5".
+</p>
+
+<p>
+The weights are loaded and restored every time a <i>RankingNetwork </i>object is created.
+</p>
+
+<br>
+
+<h4>Predicting the scores for ranking
+</h4>
+
+<img src="predicting.jpg" title="Predicting the scores" alt="Predicting the scores" style=" width: 488px; height: 314px;"><br>
+
+<p>With the network trained, our bot can now use it to predict scores. Predictions are performed by the <i>predict </i>method.
+</p>
+
+<pre><code class="l">
+    def predict(self, contact_id, language, sentiment, category, candidates):
+        """ Makes a prediction of success for all the candidates.
+        """
+        with self.graph.as_default():
+            # Let's first assemble the input data
+            x = []  # Input data
+
+            print("Creating the input vectors...")
+
+            for candidate in candidates:
+                sample = self.build_input_sample(
+                    contact_id,
+                    language,
+                    sentiment,
+                    category,
+                    candidate)
+                x.append(sample)
+
+            x = np.array(x)
+
+            print("Predicting...")
+
+            results = self.model.predict(x)
+
+            print("Done")
+
+            return results
+</code></pre>
+
+<p>
+It first builds a list of samples, one for each candidate, in a similar way to the dataset created during training mode, except this one has no labels (we don't know the right scores: we want to predict them). Then it uses Keras <i>model.predict</i> to get the list of predicted scores, one for each candidate, and returns it.
+</p>
+
+<br>
+
+<h3>Putting it all together - choosing the best human agent
+</h3>
+
+<img src="all.jpg" title="Putting it all together" alt="Putting it all together" style=" width: 751px; height: 433px;">
+
+<br>
+<br>
+
+<p>
+At last we have all we need to choose the best agent. The routing functionality is implemented in file AIRouter.py, method <i>route_to_best_agent</i>.
+</p>
+
+<pre><code class="l">    def route_to_best_agent(self, contact_id, question):
+        """ Routes the interaction to the best available agent.
+            Because this is just a sample we'll not route anything,
+            we'll just return a reply saying which agent was selected
+            or a default message if no agent could be chosen.
+        """
+
+        # Get the contact from the CRM
+        contact = self.crm.get_contact_by_id(contact_id)
+
+        # Take a guess at the language
+        language = self.text_analytics.guess_language(question, verbose=True)
+
+        # Take a guess at the sentiment
+        sentiment = self.text_analytics.guess_sentiment(question, language, verbose=False)
+
+        # Take a guess at the intent
+        intent = self.text_analytics.guess_intent(question, language, verbose=True)
+
+        print("Received question from {0}: '{1}'".format(contact["name"], question))
+        print("Language={0}, Sentiment={1}, Intent={2}".format(language, sentiment, intent))
+
+        if intent == "other":
+            # Intent was not discovered... return a default message in the proper language
+            if language == "es":
+                return "Perdona {}, pero no te entiendo...".format(contact["name"])
+            else:
+                return "Sorry {}, I couldn't understand your message...".format(contact["name"])
+        else:
+            # Generate n candidates to rank
+            candidates = self.generate_candidates(language, intent, verbose=True)
+
+            if len(candidates) == 0:
+                # No candidates case
+                if language=="es":
+                    return "Todos los agentes humanos están ocupados en este momento. Por favor espera, tu pregunta será respondida lo más rápido posible."
+                else:
+                    return "All human agents are busy at this moment. Please wait, your question will be answered as soon as possible."
+            else:
+                print("Candidates found: predicting success")
+
+                # Predict the success for each candidate
+                ranked_candidates = self.rank_candidates(contact_id, language, sentiment, intent, candidates)
+
+                print("The best agents to handle the interaction are:")
+                for ranked_candidate in ranked_candidates:
+                    print("{0} (predicted success = {1})".format(self.agents.get_agent_name(ranked_candidate[0]), ranked_candidate[1]))
+
+                # Choose the best one
+                best_agent = ranked_candidates[0]
+                
+                ret = ""
+
+                if language=="es":
+                    if intent=="sales":
+                        department = "ventas"
+                    else:
+                        department = "soporte"
+                    ret = "Transfiriendo a {0}, del departamento de {1}. ¡Encantado de hablar contigo!".format(self.agents.get_agent_name(best_agent[0]), department)
+                else:
+                    return "Directing to {0}, from {1} department. Nice talking to you!".format(self.agents.get_agent_name(best_agent[0]), intent)
+
+                return ret
+</code></pre>
+
+<p>
+In a nutshell:
+</p>
+
+<ul>
+  <li>
+    <p>
+Detects the language, the sentiment and the intent of the customer question</p>
+  </li>
+  <li>
+    <p>Generates candidates</p>
+  </li>
+  <li>
+    <p>Ranks the generated candidates</p>
+  </li>
+  <li>
+    <p>Chooses the one with the highest score
+    </p>
+  </li>
+</ul>
+
+<br>
+<br>
+
+<h3>Time to launch the bot!</h3>
+
+<img src="launch.jpg" title="Launching the bot!" alt="Launching the bot!" style=" width: 236px; height: 123px;"><br>
+
+<p>Let's recapitulate what must be done to run the example.<br>
+  <br>
+</p>
+
+<p><span class="numberedList">1.</span> Clone or download the bot code from <a href="https://github.com/RicardoEncarnacaoSantos/AIRoutingBot" target="_blank">GitHub</a>.
+</p>
+
+<p><span class="numberedList">2.</span> Install <a href="https://ngrok.com/" target="_blank">ngrok</a>, <a href="https://www.python.org/" target="_blank">Python </a>and all the needed dependencies (flask, keras, tensorflow, h5py, numpy, requests and any other required packages).
+</p>
+
+<p><span class="numberedList">3.</span> Open a Command Prompt and launch ngrok (<span class="codeSample">&gt; ngrok http 5001</span>)
+</p>
+
+<p><span class="numberedList">4.</span> Go to <a href="https://developers.facebook.com/" target="_blank">Facebook for Developers</a>, create and setup a Messaging app. Subscribe the app to a Facebook page and get the Access Token. Paste the Access Token into AIRoutingBot.py.
+</p>
+
+<p><span class="numberedList">5.</span> Subscribe <a href="https://azure.microsoft.com/en-us/services/cognitive-services/text-analytics/" target="_blank">Microsoft Text Analytics</a> services and paste your key and the endpoint base URL into TextAnalytics.py.<span style="color: rgb(64, 64, 64);"><span style="font-family: &quot;Raleway&quot;,Helvetica,sans-serif;"></span></span>
+</p>
+
+<p><span class="numberedList">6.</span> Subscribe <a href="https://eu.luis.ai/home" target="_blank">Microsoft Language Understanding</a> (LUIS) and paste your key into TextAnalytics.py. Create apps for English and Spanish cultures. Train and publish them. Paste the endpoint URLs into TextAnalytics.py.
+</p>
+
+<p><span class="numberedList">7.</span> Subscribe <a href="https://developers.google.com/maps/documentation/geocoding/intro" target="_blank">Google Maps Geocoding API</a> and paste your key into Geocoding.py.
+</p>
+
+<p><span class="numberedList">8.</span> Open another Command Prompt. Launch the bot in training mode (<span class="codeSample">&gt; python AIRoutingBot.py -train</span>) and verify that file "weights.h5" is created in the end of training. You can skip this step and use the "weights.h5" that goes with the project, but if you make any modification in customer profiles, agent profiles or interaction history, this step is mandatory.
+</p>
+
+<p><span class="numberedList">9.</span> Launch the bot in normal mode (<span class="codeSample">&gt; python AIRoutingBot.py</span>)
+</p>
+
+<p><span class="numberedList">10.</span> Go to your app in <a href="https://developers.facebook.com/" target="_blank">Facebook for Developers</a>. Set the callback URL as the URL created by ngrok, and use "AIRoutingBotToken" as your Verify Token (if you change it make sure it matches the VERIFY_TOKEN in your code).
+</p>
+
+<p><span class="numberedList">11.</span> Talk with the bot to see if it's capable of productive dialogues like these.
+</p>
+
+<img src="final_example.jpg" alt="" style=" width: 496px; height: 678px;">
+
+<br>
+<br>
+
+<h3>Conclusion</h3>
+
+
+<p>
+The "Appliances of the Future" example presented in this series of posts is a basic case of customer service - 2 departments only (support and 
+sales), 6 agents, 3 customers, a few interactions in history... in the real world the problem would not need fancy machine learning algorithms to be solved. 
+</p>
+
+<p>
+But let's imagine 20 departments, 600 agents, 300000 customers and an history with 1 million interactions to learn from. In such scenario, a bot capable of understanding the intent of a customer, directing the conversation to the right agent in the right department without making many questions, would provide a valuable customer service.
+</p>
+
+<p>
+Perceiving subtle, relevant patterns in a complex scenario is not an easy task, and that's when deep learning comes in. Neural networks are being used 
+successfully for recommender systems, matching millions of users with millions of products, I've tried to apply similar ideas to a very simple, messaging-based example of customer service, showing along the way how some machine learning cloud services can be used and how easy is to put a chatbot online these days.
+</p>
+
+<p>
+And it was fun <img src="crystal_smile2.jpg" alt="" style=" width: 32px; height: 33px;">. I hope you enjoyed as much as I did. <br>
+See you in the Future!
+</p>
+
+<br>
+  
+<div style="text-align: left;"><a href="https://github.com/RicardoEncarnacaoSantos/AIRoutingBot" target="_blank"><img src="download.jpg" title="Download the code from GitHub" alt="Download the code from GitHub" style=" width: 160px; height: 37px; border: 0px solid;"></a></div>
+
+<br>
+
+<p>
+Previous: <a href="Building_an_AI_powered_routing_chatbot_PART_3.htm">identifying the intent of the customer using Microsoft LUIS</a>
+</p>
+
+<br>
+
+</div>
+
+<div id="footer">
+	<div id="footerText">Ricardo Encarnação Santos</div>
+</div>
+
+</body></html>
