@@ -35,18 +35,18 @@
 }
 
 #cvNameText1{
-	color: #577716;
-	font-family: Helvetica, Arial, Times New Roman;
+	color: #29390a;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	font-size: 36px;
-	margin-top: 30px;
+	margin-top: 20px;
 	margin-left: 30px;
 	/*font-weight: bold;
 	letter-spacing: 1px;*/
 }
 
 #cvNameText2{
-	color: #577716;
-	font-family: Helvetica, Arial, Times New Roman;
+	color: #29390a;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	font-size: 36px;
 	margin-top: -5px;
 	margin-left: 30px;
@@ -54,28 +54,33 @@
 
 #cvHeaderText1{
  	color: #515151;
-	font-family: Helvetica, Arial, Times New Roman;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	font-size: 16px;
 	letter-spacing: 0px;
-	margin-top: 20px;
+	margin-top: 15px;
 	margin-left: 30px;
 }
 
 #cvHeaderText2{
  	color: #515151;
-	font-family: Helvetica, Arial, Times New Roman;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	font-size: 16px;
 	letter-spacing: 0px;
-	margin-top: 7px;
+	margin-top: 5px;
 	margin-left: 30px;
 }
 
 .cvProItem{
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
+	color: #101010;
+	font-size: 14px;
+	line-height: 1.5; /* Recommended for readability */
 	margin: 10px 0;
 }
 
 a.cvEmail{
 	color: #677F23;
+	text-decoration: none;
 }
 
 a.cvEmail:link{
@@ -98,7 +103,7 @@ a.cvEmail:active{
 	width: 620px;
 	border-bottom: 1px solid #C1C1C1;
 	color: #404040;
-	font-family: Helvetica, Arial, Times New Roman;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	font-size: 24px;
 	margin-top: 35px;
 	margin-left: 10px;
@@ -117,7 +122,7 @@ a.cvEmail:active{
 }
 
 #cvSectionTraining{
-	margin-top: 15px;
+	margin-top: 10px;
 	width: 620px;
 }
 
@@ -126,48 +131,64 @@ a.cvEmail:active{
 }
 
 #cvSectionCompany{
-	color: #415a10;
-	font-family: Helvetica, Arial, Times New Roman;
+	color: #425b0f;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	font-size: 16px;
-	font-style: italic;
+	font-style: normal;
 	margin-left: 10px;
 }
 
 #cvSectionPeriod{
-	color: #29390a;
-	font-family: Helvetica, Arial, Times New Roman;
-	font-size: 12px;
+	color: #425b0f;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
+	font-size: 14px;
 	font-weight: bold;
 	margin-left: 10px;
 	margin-top: 5px;
 }
 
 #cvSectionPosition{	
-	color: #55780f;
-	font-family: Helvetica, Arial, Times New Roman;
+	color: #2f4501;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	font-size: 22px;
 	margin-left: 10px;
 }
 
 #cvEducationItemTitle{	
-	color: #3e580b;
-	font-family: Helvetica, Arial, Times New Roman;
-	font-size: 18px;
+	color: #2f4501;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
+	font-size: 16px;
+	margin-left: 10px;
+}
+
+#cvTrainingItemTitle{	
+	color: #2f4501;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
+	font-size: 14px;
+	margin-left: 10px;
+}
+
+#cvTrainingItemSubtitle{
+	color: #425b0f;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
+	font-size: 12px;
+	font-style: normal;
 	margin-left: 10px;
 }
 
 p.cvSectionBody{	
-	font-family: Verdana, Helvetica, Arial, Times New Roman;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	color: #101010;
 	width: 90%;
 	font-size: 14px;
+	line-height: 1.5; /* Recommended for readability */
 	margin-left: 10px;
 	width: 600px;
 }
 
 #cvSectionBodyList{	
  	color: #515151;
-	font-family: Verdana, Helvetica, Arial, Times New Roman;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	font-size: 14px;
 	margin-left: 10px;
 	width: 600px;
@@ -176,8 +197,8 @@ p.cvSectionBody{
 #cvLateralSectionTitle{
 	width: 200px;
 	border-bottom: 1px solid #C1C1C1;
-	color: #55780f;
-	font-family: Helvetica, Arial, Times New Roman;
+	color: #2f4501;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	font-size: 18px;
 	margin-top: 35px;
 	padding-bottom: 3px;
@@ -185,8 +206,9 @@ p.cvSectionBody{
 
 #cvLateralList{
  	color: #515151;
-	font-family: Helvetica, Arial, Times New Roman;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	font-size: 14px;
+	line-height: 1.5; /* Recommended for readability */
 	margin-left: -18px;
 	margin-top: 7px;
 	list-style-image: url('images/greenbullet3_16x16.png');
@@ -194,7 +216,7 @@ p.cvSectionBody{
 
 #cvLateralSectionSubtitle{
 	color: #577716;
-	font-family: Helvetica, Arial, Times New Roman;
+	font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
 	font-size: 16px;
 	font-style: italic;
 	margin-top: 20px;
@@ -205,4 +227,3 @@ p.cvSectionBody{
     height: 40px;
     object-fit: contain;
 }
-
